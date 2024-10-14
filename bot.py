@@ -20,14 +20,16 @@ intents.voice_states = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 #loadup opus
-discord.opus.load_opus("opus")
-discord.opus.load_opus()
+#discord.opus.load_opus("opus.dll")
+
 
 
 # yt-dlp options
 ytdlp_format_options = {
     'format': 'bestaudio/best',
     'noplaylist': True,
+    'quiet': True,
+    'default_search': 'auto',
 }
 
 
@@ -88,7 +90,7 @@ async def play(ctx, url):
     
     server = ctx.message.guild
     voice_channel = server.voice_client
-
+    
     async with ctx.typing():
         player = await YTDLSource.from_url(url, loop=bot.loop, stream=True)
         voice_channel.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
