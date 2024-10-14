@@ -19,11 +19,18 @@ intents.message_content = True
 intents.voice_states = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+#loadup opus
+discord.opus.load_opus("opus")
+discord.opus.load_opus()
+
+
 # yt-dlp options
 ytdlp_format_options = {
     'format': 'bestaudio/best',
     'noplaylist': True,
 }
+
+
 
 ffmpeg_options = {
     'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
@@ -78,20 +85,21 @@ async def leave(ctx):
 
 @bot.command(name='play', help="Plays a YouTube video in the voice channel")
 async def play(ctx, url):
-    try:
-        server = ctx.message.guild
-        voice_channel = server.voice_client
+    
+    server = ctx.message.guild
+    voice_channel = server.voice_client
 
-        async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=bot.loop, stream=True)
-            voice_channel.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
-            print(f"Now playing: {player.title}")  # Add this for debugging
+    async with ctx.typing():
+        player = await YTDLSource.from_url(url, loop=bot.loop, stream=True)
+        voice_channel.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
+        print(f"Now playing: {player.title}")  # Add this for debugging
+        
     
 
 
-        await ctx.send(f"**Now playing:** {player.title}")
-    except Exception as e:
-        await ctx.send(f"An error occurred: {str(e)}")
+
+    await ctx.send(f"**Now playing:** {player.title}")
+    
 
 
 @bot.command(name='pause', help="Pauses the current song")
