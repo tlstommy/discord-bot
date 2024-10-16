@@ -23,6 +23,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
         super().__init__(source, volume)
         self.data = data
+        print("DATA:")
+        print(self.data)
         self.title = data.get('title')
         self.url = data.get('url')
 

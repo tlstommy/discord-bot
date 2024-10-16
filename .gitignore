@@ -163,3 +163,4 @@ cython_debug/
 
 credentials.py
 opus.dll
+models/*

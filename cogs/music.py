@@ -41,6 +41,11 @@ class MusicPlayer(commands.Cog):
             ctx.voice_client.play(current_song, after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next_song(ctx), self.bot.loop).result())
             await ctx.send(f"**Now playing:** {current_song.title}")
 
+            embed = discord.Embed(
+                title=f"Now Playing - current",
+                color=discord.Color.green(),
+            )
+
 
     #skips the song
     @commands.hybrid_command(name='skip', help="Skips the current song")
