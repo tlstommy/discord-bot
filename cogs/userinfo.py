@@ -3,8 +3,8 @@ from discord.ext import commands
 from datetime import datetime
 
 class UserInfo(commands.Cog):
-    @commands.command(name='userinfo', help="Displays information about the user")
-    async def userinfo(self, ctx, member: discord.Member = None):
+    @commands.hybrid_command(name='userinfo', help="Displays information about the user")
+    async def userinfo(self, ctx, *, member: discord.Member = None):
         if member is None:
             member = ctx.author  # If no user is mentioned, get info for the message author
 

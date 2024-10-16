@@ -11,8 +11,8 @@ class MusicPlayer(commands.Cog):
 
 
     #plays a vid
-    @commands.command(name='play', help="Plays a YouTube video or audio in the voice channel")
-    async def play(self, ctx, *, url):
+    @commands.hybrid_command(name='play', help="Plays a YouTube video or audio in the voice channel")
+    async def play(self, ctx, *, url: str):
         print("Play called!!")
         if not ctx.author.voice:
             await ctx.send(f"{ctx.author.name}, you need to join a voice channel first.")
@@ -43,14 +43,14 @@ class MusicPlayer(commands.Cog):
 
 
     #skips the song
-    @commands.command(name='skip', help="Skips the current song")
+    @commands.hybrid_command(name='skip', help="Skips the current song")
     async def skip(self, ctx):
         if ctx.voice_client.is_playing():
             ctx.voice_client.stop()
             await ctx.send("Skipping current song...")
 
     #pause the song
-    @commands.command(name='pause', help="Pauses the current audio")
+    @commands.hybrid_command(name='pause', help="Pauses the current audio")
     async def pause(self, ctx):
         if ctx.voice_client is None or not ctx.voice_client.is_playing():
             await ctx.send("There's no music playing to pause.")
@@ -60,7 +60,7 @@ class MusicPlayer(commands.Cog):
         await ctx.send("Paused the music.")
 
     #unpause
-    @commands.command(name='resume', help="Resumes the paused audio")
+    @commands.hybrid_command(name='resume', help="Resumes the paused audio")
     async def resume(self, ctx):
         if ctx.voice_client is None or not ctx.voice_client.is_paused():
             await ctx.send("There's no paused music to resume.")
@@ -70,8 +70,8 @@ class MusicPlayer(commands.Cog):
         await ctx.send("Resumed the music.")
 
 
-    #sop the song
-    @commands.command(name='stop', help="Stops the current audio")
+    #stop the song
+    @commands.hybrid_command(name='stop', help="Stops the current audio")
     async def stop(self, ctx):
         if ctx.voice_client is None or not ctx.voice_client.is_playing():
             await ctx.send("There's no music playing to stop.")
@@ -82,7 +82,7 @@ class MusicPlayer(commands.Cog):
 
 
     #prints thd deque
-    @commands.command(name='queue', help="Displays the current song queue")
+    @commands.hybrid_command(name='queue', help="Displays the current song queue")
     async def queue(self, ctx):
         if not self.song_queue:
             await ctx.send("The song queue is empty.")
