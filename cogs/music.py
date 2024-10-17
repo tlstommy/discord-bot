@@ -40,14 +40,29 @@ class MusicPlayer(commands.Cog):
             ctx.voice_client.play(current_song, after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next_song(ctx), self.bot.loop).result())
             
             embed = discord.Embed(
-                title=f"Now Playing from the tooobz",
+                title=f"Now Playing",
                 color=discord.Color.green(),
                 url=current_song.link_url,
             )
+
+
+            button1 = discord.Button(
+                style=discord.ButtonStyle.blue,
+                custom_id="button1",
+                label="test",
+            )
+            button2 = discord.Button(
+                style=discord.ButtonStyle.blue,
+                custom_id="button2",
+                label="test",
+            )
+
+
+            action_row = discord.ActionRow(button1,button2)
             embed.set_thumbnail(url=current_song.thumbnail)
             embed.add_field(name=current_song.title, value=current_song.uploader)
             embed.add_field(name="Length", value=current_song.length)
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed,components=action_row)
 
 
     #skips the song
