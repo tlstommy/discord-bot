@@ -13,7 +13,6 @@ class MusicPlayer(commands.Cog):
     #plays a vid
     @commands.hybrid_command(name='play', help="Plays a YouTube video or audio in the voice channel")
     async def play(self, ctx, *, url: str):
-        print("Play called!!")
         if not ctx.author.voice:
             await ctx.send(f"{ctx.author.name}, you need to join a voice channel first.")
             return
@@ -39,12 +38,16 @@ class MusicPlayer(commands.Cog):
         if self.song_queue:
             current_song = self.song_queue.popleft()
             ctx.voice_client.play(current_song, after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next_song(ctx), self.bot.loop).result())
-            await ctx.send(f"**Now playing:** {current_song.title}")
-
+            
             embed = discord.Embed(
-                title=f"Now Playing - current",
+                title=f"Now Playing from the tooobz",
                 color=discord.Color.green(),
+                url=current_song.link_url,
             )
+            embed.set_thumbnail(url=current_song.thumbnail)
+            embed.add_field(name=current_song.title, value=current_song.uploader)
+            embed.add_field(name="Length", value=current_song.length)
+            await ctx.send(embed=embed)
 
 
     #skips the song

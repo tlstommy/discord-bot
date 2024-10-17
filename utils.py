@@ -1,6 +1,6 @@
 import discord
 import yt_dlp as ytdlp
-import asyncio
+import asyncio,json
 
 #ytdlp options
 ytdlp_format_options = {
@@ -23,12 +23,19 @@ class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
         super().__init__(source, volume)
         self.data = data
-        print("DATA:")
-        print(self.data)
+        
+
+        
+
         self.title = data.get('title')
         self.url = data.get('url')
+        self.link_url = data.get('webpage_url')
+        self.length = data.get('duration_string')
+        self.thumbnail = data.get('thumbnail')
+        self.uploader = data.get('uploader')
+        print(self.thumbnail)
 
-    @classmethod
+    @classmethod 
     async def from_url(cls, url, *, loop=None, stream=False):
         loop = loop or asyncio.get_event_loop()
         data = await loop.run_in_executor(None, lambda: ytdlp_extractor.extract_info(url, download=not stream))
