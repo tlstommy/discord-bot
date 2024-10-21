@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.ui import Button, View
 import asyncio
 from collections import deque
 from utils import YTDLSource #settings for ytdl
@@ -46,23 +47,26 @@ class MusicPlayer(commands.Cog):
             )
 
 
-            button1 = discord.Button(
-                style=discord.ButtonStyle.blue,
+            button1 = Button(
+                style=discord.ButtonStyle.primary,
                 custom_id="button1",
                 label="test",
             )
-            button2 = discord.Button(
-                style=discord.ButtonStyle.blue,
+            button2 = Button(
+                style=discord.ButtonStyle.secondary,
                 custom_id="button2",
                 label="test",
             )
 
 
-            action_row = discord.ActionRow(button1,button2)
+            
+           
+
             embed.set_thumbnail(url=current_song.thumbnail)
             embed.add_field(name=current_song.title, value=current_song.uploader)
             embed.add_field(name="Length", value=current_song.length)
-            await ctx.send(embed=embed,components=action_row)
+            view = ControlView(ctx)
+            await ctx.send(embed=embed,view=view)
 
 
     #skips the song
@@ -112,6 +116,38 @@ class MusicPlayer(commands.Cog):
         else:
             queue_list = "\n".join([f"{i+1}. {song.title}" for i, song in enumerate(self.song_queue)])
             await ctx.send(f"**Current Queue:**\n{queue_list}")
+
+# View to hold the buttons (controls for the music)
+class ControlView(View):
+    def __init__(self, ctx):
+        super().__init__()
+        self.ctx = ctx
+
+    #skip button
+    @discord.ui.button(label="Skip", style=discord.ButtonStyle.primary)
+    async def skip_button(self, interaction: discord.Interaction, button: Button):
+        if self.ctx.voice_client.is_playing():
+            self.ctx.voice_client.stop()
+            await interaction.response.send_message("Skipped the song.", ephemeral=True)
+
+    # Play/Pause button
+    @discord.ui.button(label="Pause", style=discord.ButtonStyle.secondary)
+    async def pause_button(self, interaction: discord.Interaction, button: Button):
+        # If music is playing, pause it and change the button label to "Resume"
+        if self.ctx.voice_client.is_playing():
+            self.ctx.voice_client.pause()
+            button.label = "Resume"  # Change the button label to Resume
+            await interaction.response.edit_message(content="Paused.", view=self)
+        # If music is paused, resume it and change the button label to "Pause"
+        elif self.ctx.voice_client.is_paused():
+            self.ctx.voice_client.resume()
+            button.label = "Pause"  # Change the button label back to Pause
+            await interaction.response.edit_message(content="Resumed.", view=self)
+
+
+    
+
+
 
 #load the cog into the bot
 async def setup(bot):
