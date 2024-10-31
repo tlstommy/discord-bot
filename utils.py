@@ -1,47 +1,47 @@
 import discord
 import yt_dlp as ytdlp
-import asyncio,json
+import asyncio
+import concurrent.futures
 
-#ytdlp options
+# ytdlp options
 ytdlp_format_options = {
     'format': 'bestaudio/best',
     'noplaylist': True,
     'quiet': True,
     'no_warnings': True,
-    'default_search': 'auto',#search if no url
+    'default_search': 'auto',  # search if no URL
 }
 
-#ffmpeg ops
+# ffmpeg options
 ffmpeg_options = {
     'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-    'options': '-vn',  #disable video
+    'options': '-vn -bufsize 512k',
 }
 
+#ytdlp extractor setup
 ytdlp_extractor = ytdlp.YoutubeDL(ytdlp_format_options)
+download_executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)  # limit threads for download
 
 class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
         super().__init__(source, volume)
         self.data = data
-        
 
-        
-
+        # Extracted data for display
         self.title = data.get('title')
-        self.url = data.get('url')
         self.link_url = data.get('webpage_url')
         self.length = data.get('duration_string')
         self.thumbnail = data.get('thumbnail')
         self.uploader = data.get('uploader')
-        print(self.thumbnail)
 
-    @classmethod 
-    async def from_url(cls, url, *, loop=None, stream=False):
-        loop = loop or asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, lambda: ytdlp_extractor.extract_info(url, download=not stream))
+    @classmethod
+    async def from_url(cls, url, *, stream=True):
+        #downlaod in a sep thread
+        data = await asyncio.get_running_loop().run_in_executor(download_executor, lambda: ytdlp_extractor.extract_info(url, download=False))
 
         if 'entries' in data:
-            data = data['entries'][0]#grab top item
+            data = data['entries'][0] 
 
-        filename = data['url'] if stream else ytdlp_extractor.prepare_filename(data)
+        #grab data
+        filename = data['url']
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)

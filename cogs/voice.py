@@ -8,7 +8,7 @@ class VoiceManagement(commands.Cog):
     @commands.hybrid_command(name='join', help="Joins the user's voice channel")
     async def join(self, ctx):
         if not ctx.author.voice:
-            await ctx.send(f"{ctx.author.name}, you need to join a voice channel first.")
+            await ctx.send(f"{ctx.author.name}, you need to join a voice channel first.",ephemeral=True)
             return
 
         channel = ctx.author.voice.channel
@@ -26,7 +26,7 @@ class VoiceManagement(commands.Cog):
             await ctx.voice_client.disconnect()
             await ctx.send("Disconnected from the voice channel.")
         else:
-            await ctx.send("I'm not connected to any voice channel.")
+            await ctx.send("I'm not connected to any voice channel.",ephemeral=True)
 
 #load the cog into the bot
 async def setup(bot):

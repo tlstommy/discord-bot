@@ -1,10 +1,10 @@
 import discord
 from discord.ext import commands
 from datetime import datetime
-import random
+import random,time
 
 
-# 'fun' commands - ones that are just kinda misc/for fun
+#'fun' commands - ones that are just kinda misc/for fun
 class Fun(commands.Cog):
     @commands.hybrid_command(name='rtd', help="roles a n-sided die")
     async def dice_role(self, ctx, *, sides: int = 6):

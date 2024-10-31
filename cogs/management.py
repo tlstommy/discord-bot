@@ -11,7 +11,7 @@ class Management(commands.Cog):
             await ctx.guild.me.edit(nick=name)
             await ctx.send(f"Nickname changed to: {name}")
         else:
-            await ctx.send(f"You must be an admin to run this command.") 
+            await ctx.send(f"You must be an admin to run this command.",ephemeral=True) 
 
 # Load the cog into the bot
 async def setup(bot):

@@ -33,7 +33,7 @@ async def on_ready():
     else:
 
         try:
-            synced = await bot.tree.sync()  # Syncs all the global slash commands
+            synced = await bot.tree.sync()  #syncs all the global slash commands
             print(f"Synced {len(synced)} global commands")
         except Exception as e:
             print(f"Failed to sync global commands: {e}")
@@ -57,7 +57,7 @@ async def on_ready():
     #bot ready
     print(f'Logged in as {bot.user.name}')
 
-# load the cogs ( commands )
+#load the cogs ( commands )
 async def load_cogs():
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
