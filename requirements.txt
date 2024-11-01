@@ -1,0 +1,4 @@
+discord-components
+discord-py-interactions
+discord-typings
+discord.py

@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from credentials import TOKEN,SERVER_IDS
+from credentials import TOKEN
 import os
 
 DEBUG_BP = False
@@ -20,23 +20,13 @@ async def on_ready():
     
     
 
-    if DEBUG_BP:
-        GUILD_ID = SERVER_IDS["boys-place"] 
-        guild = discord.Object(id=GUILD_ID)
+    
 
-        #debug sync the slash commands for this specific guild
-        try:
-            synced = await bot.tree.sync(guild=guild)
-            print(f"Synced {len(synced)} guild-specific commands for guild ID {GUILD_ID}")
-        except Exception as e:
-            print(f"Failed to sync commands for guild ID {GUILD_ID}: {e}")
-    else:
-
-        try:
-            synced = await bot.tree.sync()  #syncs all the global slash commands
-            print(f"Synced {len(synced)} global commands")
-        except Exception as e:
-            print(f"Failed to sync global commands: {e}")
+    try:
+        synced = await bot.tree.sync()  #syncs all the global slash commands
+        print(f"Synced {len(synced)} global commands")
+    except Exception as e:
+        print(f"Failed to sync global commands: {e}")
     
     
     
