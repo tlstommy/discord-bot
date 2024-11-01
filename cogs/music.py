@@ -4,6 +4,7 @@ from discord.ui import Button, View
 import asyncio
 from collections import deque
 from utils import YTDLSource #settings for ytdl
+from random import shuffle
 
 import concurrent.futures
 download_executor = concurrent.futures.ThreadPoolExecutor(max_workers=2) 
@@ -92,8 +93,8 @@ class MusicPlayer(commands.Cog):
     #stop the song
     @commands.hybrid_command(name='stop', help="Stops the current audio")
     async def stop(self, ctx):
-        if ctx.voice_client is None or not ctx.voice_client.is_playing():
-            await ctx.send("There's no music playing to stop.",ephemeral=True)
+        if not ctx.author.voice:
+            await ctx.send(f"{ctx.author.name}, you need to join a voice channel first.",ephemeral=True)
             return
         
         ctx.voice_client.stop()
@@ -111,6 +112,17 @@ class MusicPlayer(commands.Cog):
             queue_list = "\n".join([f"{i+1}. {song.title}" for i, song in enumerate(self.song_queue)])
             await ctx.send(f"**Current Queue:**\n{queue_list}",ephemeral=True)
 
+    #shuffle the queue
+    @commands.hybrid_command(name='shuffle', help="Shuffles the queue")
+    async def shuffle_queue(self, ctx):
+        if not self.song_queue:
+            await ctx.send("The song queue is empty.")
+        else:
+            shuffle(self.song_queue)
+            queue_list = "\n".join([f"{i+1}. {song.title}" for i, song in enumerate(self.song_queue)])
+            await ctx.send(f"**Shuffled Queue!**\n")
+
+
 #buttons 
 class ControlView(View):
     def __init__(self, ctx):
@@ -119,7 +131,7 @@ class ControlView(View):
 
 
     #leave vc 
-    @discord.ui.button(label="☒", style=discord.ButtonStyle.secondary)
+    @discord.ui.button(label="✕", style=discord.ButtonStyle.secondary)
     async def stop_button(self, interaction: discord.Interaction, button: Button):
         if self.ctx.voice_client.is_playing():
             self.ctx.voice_client.stop()
@@ -142,11 +154,17 @@ class ControlView(View):
             await interaction.response.edit_message(content="Audio Playing.", view=self)
 
     #skip button
-    @discord.ui.button(label="⪭", style=discord.ButtonStyle.secondary)
+    @discord.ui.button(label="≥", style=discord.ButtonStyle.secondary)
     async def skip_button(self, interaction: discord.Interaction, button: Button):
         if self.ctx.voice_client.is_playing():
             self.ctx.voice_client.stop()
             await interaction.response.send_message(f"{self.ctx.author.name} skipped the song.")
+
+    #shuffle button
+    @discord.ui.button(label="⤨", style=discord.ButtonStyle.secondary)
+    async def shuffle_button(self, interaction: discord.Interaction, button: Button):
+        shuffle_command = self.ctx.bot.get_command("shuffle")
+        await self.ctx.invoke(shuffle_command)
 
 
     

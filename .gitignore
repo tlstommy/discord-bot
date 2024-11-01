@@ -165,3 +165,4 @@ credentials.py
 opus.dll
 models/*
 sample.json
+cogs/admin.py
