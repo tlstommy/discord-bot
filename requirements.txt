@@ -2,3 +2,8 @@ discord-components
 discord-py-interactions
 discord-typings
 discord.py
+py-cord
+PyNaCl
+requests
+urllib3
+yt-dlp

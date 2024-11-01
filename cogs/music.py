@@ -18,6 +18,7 @@ class MusicPlayer(commands.Cog):
     #plays a vid
     @commands.hybrid_command(name='play', help="Plays a YouTube video or audio in the voice channel")
     async def play(self, ctx, *, url: str):
+        print("play command called")
         if not ctx.author.voice:
             await ctx.send(f"{ctx.author.name}, you need to join a voice channel first.",ephemeral=True)
             return
@@ -27,6 +28,7 @@ class MusicPlayer(commands.Cog):
 
         #download vid in a new thread to not lag
         async with ctx.typing():
+            print("preparing to extract")
             try:
                 player = await YTDLSource.from_url(url, stream=True)
                 self.song_queue.append(player)

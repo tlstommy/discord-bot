@@ -20,19 +20,21 @@ ffmpeg_options = {
 
 #ytdlp extractor setup
 ytdlp_extractor = ytdlp.YoutubeDL(ytdlp_format_options)
+print("extractor called")
 download_executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)  # limit threads for download
-
+print("executor called")
 class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
         super().__init__(source, volume)
         self.data = data
-
+        
         # Extracted data for display
         self.title = data.get('title')
         self.link_url = data.get('webpage_url')
         self.length = data.get('duration_string')
         self.thumbnail = data.get('thumbnail')
         self.uploader = data.get('uploader')
+        print(f"extracted: {self.title}")
 
     @classmethod
     async def from_url(cls, url, *, stream=True):
@@ -44,4 +46,6 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
         #grab data
         filename = data['url']
+        print("got filename")
+        print(filename)
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)

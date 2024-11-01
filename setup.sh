@@ -16,4 +16,4 @@ else
 
 
 
-sudo pip install -r $currentWorkingDir/requirements.txt > /dev/null &
+sudo pip install -r $currentWorkingDir/requirements.txt --break-system-packages
