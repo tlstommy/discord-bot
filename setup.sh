@@ -12,7 +12,7 @@ fi
 
 if grep -Fxq "exit 0" /etc/rc.local; then
   sudo sed -i "/exit 0/i cd $currentWorkingDir && sudo bash $currentWorkingDir/scripts/start.sh > $currentWorkingDir/piink-log.txt 2>&1 &" /etc/rc.local
-else
+fi
 
 
 

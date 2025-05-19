@@ -62,6 +62,9 @@ class MusicPlayer(commands.Cog):
             embed.add_field(name="Length", value=current_song.length)
             view = ControlView(ctx)
             await ctx.send(embed=embed,view=view)
+        else:
+            await asyncio.sleep(10)
+            await ctx.voice_client.disconnect()
 
 
     #skips the song
