@@ -30,7 +30,7 @@ class MusicPlayer(commands.Cog):
         async with ctx.typing():
             print("preparing to extract")
             try:
-                player = await YTDLSource.from_url(url, stream=True)
+                player = await YTDLSource.from_url(url, stream=False)
                 self.song_queue.append(player)
 
                 if not ctx.voice_client.is_playing():
@@ -44,27 +44,42 @@ class MusicPlayer(commands.Cog):
 
     #plays the next song
     async def play_next_song(self, ctx):
+        if not ctx.voice_client or not ctx.voice_client.is_connected():
+            return
+
         if self.song_queue:
             current_song = self.song_queue.popleft()
-            
-            ctx.voice_client.play(current_song, after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next_song(ctx), self.bot.loop).result())
-            
+            filename = None
+            if hasattr(current_song, 'data') and not current_song.data.get('is_live', False):
+                filename = current_song.data.get('_filename')
+
+            def after_playback(error):
+                # Clean up file
+                if filename and os.path.exists(filename):
+                    try:
+                        os.remove(filename)
+                    except Exception as e:
+                        print(f"Error deleting file: {e}")
+                # Only call play_next_song if there are more songs
+                fut = asyncio.run_coroutine_threadsafe(self.play_next_song(ctx), self.bot.loop)
+                try:
+                    fut.result()
+                except Exception as e:
+                    print(f"Error in after callback: {e}")
+
+            ctx.voice_client.play(current_song, after=after_playback)
+
             embed = discord.Embed(
                 title=f"Now Playing",
                 color=discord.Color.green(),
                 url=current_song.link_url,
             )
-
-
-
-            embed.set_thumbnail(url=current_song.thumbnail)
-            embed.add_field(name=current_song.title, value=current_song.uploader)
-            embed.add_field(name="Length", value=current_song.length)
-            view = ControlView(ctx)
-            await ctx.send(embed=embed,view=view)
+            embed.add_field(name="Title", value=current_song.title)
+            await ctx.send(embed=embed)
         else:
             await asyncio.sleep(10)
-            await ctx.voice_client.disconnect()
+            if ctx.voice_client and not ctx.voice_client.is_playing():
+                await ctx.voice_client.disconnect()
 
 
     #skips the song

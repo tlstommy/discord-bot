@@ -6,7 +6,7 @@ import os,re,json, threading
 
 #for terminal talking 
 from terminal_input import start_terminal_input
-ENABLE_TERMINAL = True  #ALLOW io from term
+ENABLE_TERMINAL = False  #ALLOW io from term
 TERMINAL_CHANNEL_ID = 744962705353474140
 
 
