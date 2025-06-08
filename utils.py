@@ -17,6 +17,8 @@ ytdlp_format_options = {
     'no_warnings': True,
     'default_search': 'auto',  # search if no URL
     'outtmpl': os.path.join(SONG_DOWNLOAD_DIRECTORY, '%(id)s.%(ext)s'),  # save to downloads folder
+    'concurrent_fragment_downloads': 5,  #download up to 5 fragments at once
+    'fragment_retries': 10, 
 }
 
 # ffmpeg options

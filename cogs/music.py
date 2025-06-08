@@ -5,6 +5,8 @@ import asyncio
 from collections import deque
 from utils import YTDLSource #settings for ytdl
 from random import shuffle
+import os
+import shutil
 
 import concurrent.futures
 download_executor = concurrent.futures.ThreadPoolExecutor(max_workers=2) 
@@ -80,6 +82,7 @@ class MusicPlayer(commands.Cog):
             await asyncio.sleep(10)
             if ctx.voice_client and not ctx.voice_client.is_playing():
                 await ctx.voice_client.disconnect()
+                clear_downloads()
 
 
     #skips the song
@@ -120,6 +123,7 @@ class MusicPlayer(commands.Cog):
         ctx.voice_client.stop()
         self.song_queue = deque()
         await ctx.voice_client.disconnect()
+        clear_downloads()
         await ctx.send("Stopped the music.")
 
 
@@ -187,9 +191,15 @@ class ControlView(View):
         await self.ctx.invoke(shuffle_command)
 
 
-    
-
-
+def clear_downloads():
+    folder = "downloads"
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(f"Failed to delete {file_path}: {e}")
 
 #load the cog into the bot
 async def setup(bot):
